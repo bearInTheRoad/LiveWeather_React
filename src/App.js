@@ -10,6 +10,7 @@ const App = () => {
   let [cityName, setCityName] = useState("");
   const [weatherData, setWeatherData] = useState({});
   const [error, setError] = useState(false);
+  const [count, setCount] = useState(0);
 
   const URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${process.env.REACT_APP_API_KEY_WEATHER_APP}`;
 
@@ -41,13 +42,16 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <Header></Header>
+      <Header count={count}></Header>
+      <div>{count}</div>
       <InputCity
         inputCity={inputCity}
         // cityName={cityName}
         // setCityName={setCityName}
         onInputHandler={inputHandler}
         onSubmitHandler={submitHandler}
+        count={count}
+        setCount={setCount}
       />
       {error ? (
         <div className="error">No Data Found</div>
