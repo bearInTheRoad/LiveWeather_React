@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "./Components/Header";
 import InputCity from "./Components/InputCity";
 import ShowWeather from "./Components/ShowWeather";
@@ -11,6 +11,8 @@ const App = () => {
   const [weatherData, setWeatherData] = useState({});
   const [error, setError] = useState(false);
   const [count, setCount] = useState(0);
+
+  const hasMounted = useRef(false);
 
   const URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${process.env.REACT_APP_API_KEY_WEATHER_APP}`;
 
@@ -28,16 +30,21 @@ const App = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(URL)
-      .then((response) => {
-        console.log(response);
-        setWeatherData(response);
-      })
-      .catch((error) => {
-        setError(error);
-        setWeatherData({});
-      });
+    if (hasMounted.current) {
+      console.log("this is not gonna run in first render");
+      axios
+        .get(URL)
+        .then((response) => {
+          console.log(response);
+          setWeatherData(response);
+        })
+        .catch((error) => {
+          setError(error);
+          setWeatherData({});
+        });
+    } else {
+      hasMounted.current = true;
+    }
   }, [URL]);
 
   return (
@@ -56,7 +63,7 @@ const App = () => {
       {error ? (
         <div className="error">No Data Found</div>
       ) : (
-        <ShowWeather data={weatherData} />
+        <ShowWeather data={weatherData.data} />
       )}
     </React.Fragment>
   );
